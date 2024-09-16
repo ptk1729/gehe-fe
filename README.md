@@ -1,8 +1,10 @@
-This is a Frontend for [Gehe.fyi](https://gehe.fyi/) project which is a url shortener bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Gehe.fyi Frontend
+
+This is the frontend for the [Gehe.fyi](https://gehe.fyi/) project, a URL shortener bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+To start the development server:
 
 ```bash
 npm run dev
@@ -14,315 +16,215 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) in your browser to see the application in action.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Edit the page by modifying `app/page.js`. The page updates automatically as you make changes.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This project utilizes [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) for automatic optimization and loading of the Inter font from Google Fonts.
 
-Backend Server API Documentation
-Welcome to the API documentation for the backend server. This guide is intended for frontend developers to understand and integrate with the backend APIs effectively.
+## Backend Server API Documentation
 
-Table of Contents
-Base URL
-Authentication
-API Endpoints
-User Authentication
-Login
-Register
-User Profile
-Get User Profile
-Update User Profile
-Items Management
-Get Items
-Create Item
-Update Item
-Delete Item
-Error Handling
-Examples
-Contact
-Base URL
-All API requests are made to the following base URL:
+This section is for frontend developers who need to interact with the backend APIs.
 
-arduino
-Copy code
-<https://api.yourapp.com/v1>
-Authentication
-All endpoints (except for login and registration) require authentication via a JSON Web Token (JWT). Include the token in the Authorization header:
+### Base URL
 
-makefile
-Copy code
+All API requests should be sent to:
+
+```
+https://api.yourapp.com/v1
+```
+
+### Authentication
+
+All endpoints, except for login and registration, require authentication using a JSON Web Token (JWT). Include the token in the Authorization header:
+
+```makefile
 Authorization: Bearer YOUR_JWT_TOKEN
-API Endpoints
-User Authentication
-Login
-Endpoint: POST /auth/login
+```
 
-Description: Authenticate a user and receive a JWT.
+### API Endpoints
 
-Request Body:
+#### User Authentication
 
-json
-Copy code
-{
-  "email": "<user@example.com>",
-  "password": "your_password"
-}
-Response:
+- **Login**
+  - **Endpoint:** POST /auth/login
+  - **Body:**
 
-json
-Copy code
-{
-  "token": "jwt_token",
-  "user": {
-    "id": "user_id",
-    "name": "John Doe",
-    "email": "<user@example.com>"
-  }
-}
-Register
-Endpoint: POST /auth/register
-
-Description: Create a new user account.
-
-Request Body:
-
-json
-Copy code
-{
-  "name": "John Doe",
-  "email": "<user@example.com>",
-  "password": "your_password"
-}
-Response:
-
-json
-Copy code
-{
-  "message": "User registered successfully",
-  "user": {
-    "id": "user_id",
-    "name": "John Doe",
-    "email": "<user@example.com>"
-  }
-}
-User Profile
-Get User Profile
-Endpoint: GET /users/me
-
-Description: Retrieve the authenticated user's profile.
-
-Headers:
-
-makefile
-Copy code
-Authorization: Bearer YOUR_JWT_TOKEN
-Response:
-
-json
-Copy code
-{
-  "id": "user_id",
-  "name": "John Doe",
-  "email": "<user@example.com>",
-  "createdAt": "2023-01-01T00:00:00Z"
-}
-Update User Profile
-Endpoint: PUT /users/me
-
-Description: Update the authenticated user's profile information.
-
-Headers:
-
-makefile
-Copy code
-Authorization: Bearer YOUR_JWT_TOKEN
-Request Body:
-
-json
-Copy code
-{
-  "name": "Jane Doe",
-  "password": "new_password" // Optional
-}
-Response:
-
-json
-Copy code
-{
-  "message": "Profile updated successfully",
-  "user": {
-    "id": "user_id",
-    "name": "Jane Doe",
-    "email": "<user@example.com>"
-  }
-}
-Items Management
-Get Items
-Endpoint: GET /items
-
-Description: Retrieve a list of items.
-
-Headers:
-
-makefile
-Copy code
-Authorization: Bearer YOUR_JWT_TOKEN
-Query Parameters:
-
-page (integer, optional): Page number for pagination.
-limit (integer, optional): Number of items per page.
-Response:
-
-json
-Copy code
-{
-  "items": [
+    ```json
     {
-      "id": "item_id",
-      "name": "Item Name",
-      "description": "Item Description",
+      "email": "user@example.com",
+      "password": "your_password"
+    }
+    ```
+
+  - **Response:**
+
+    ```json
+    {
+      "token": "jwt_token",
+      "user": {
+        "id": "user_id",
+        "name": "John Doe",
+        "email": "user@example.com"
+      }
+    }
+    ```
+
+- **Register**
+  - **Endpoint:** POST /auth/register
+  - **Body:**
+
+    ```json
+    {
+      "name": "John Doe",
+      "email": "user@example.com",
+      "password": "your_password"
+    }
+    ```
+
+  - **Response:**
+
+    ```json
+    {
+      "message": "User registered successfully",
+      "user": {
+        "id": "user_id",
+        "name": "John Doe",
+        "email": "user@example.com"
+      }
+    }
+    ```
+
+#### User Profile
+
+- **Get User Profile**
+  - **Endpoint:** GET /users/me
+  - **Headers:**
+
+    ```makefile
+    Authorization: Bearer YOUR_JWT_TOKEN
+    ```
+
+  - **Response:**
+
+    ```json
+    {
+      "id": "user_id",
+      "name": "John Doe",
+      "email": "user@example.com",
       "createdAt": "2023-01-01T00:00:00Z"
     }
-    // More items...
-  ],
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "totalPages": 5,
-    "totalItems": 50
-  }
-}
-Create Item
-Endpoint: POST /items
+    ```
 
-Description: Create a new item.
+- **Update User Profile**
+  - **Endpoint:** PUT /users/me
+  - **Headers:**
 
-Headers:
+    ```makefile
+    Authorization: Bearer YOUR_JWT_TOKEN
+    ```
 
-makefile
-Copy code
-Authorization: Bearer YOUR_JWT_TOKEN
-Request Body:
+  - **Body:**
 
-json
-Copy code
-{
-  "name": "New Item",
-  "description": "Description of the new item"
-}
-Response:
+    ```json
+    {
+      "name": "Jane Doe",
+      "password": "new_password"
+    }
+    ```
 
-json
-Copy code
-{
-  "message": "Item created successfully",
-  "item": {
-    "id": "item_id",
-    "name": "New Item",
-    "description": "Description of the new item",
-    "createdAt": "2023-01-01T00:00:00Z"
-  }
-}
-Update Item
-Endpoint: PUT /items/:id
+  - **Response:**
 
-Description: Update an existing item.
+    ```json
+    {
+      "message": "Profile updated successfully",
+      "user": {
+        "id": "user_id",
+        "name": "Jane Doe",
+        "email": "user@example.com"
+      }
+    }
+    ```
 
-Headers:
+#### Items Management
 
-makefile
-Copy code
-Authorization: Bearer YOUR_JWT_TOKEN
-Parameters:
+- **Get Items**
+  - **Endpoint:** GET /items
+  - **Headers:**
 
-id (string): ID of the item to update.
-Request Body:
+    ```makefile
+    Authorization: Bearer YOUR_JWT_TOKEN
+    ```
 
-json
-Copy code
-{
-  "name": "Updated Item Name",
-  "description": "Updated description"
-}
-Response:
+  - **Query Parameters:** Page (integer, optional), Limit (integer, optional)
+  - **Response:**
 
-json
-Copy code
-{
-  "message": "Item updated successfully",
-  "item": {
-    "id": "item_id",
-    "name": "Updated Item Name",
-    "description": "Updated description",
-    "updatedAt": "2023-01-02T00:00:00Z"
-  }
-}
-Delete Item
-Endpoint: DELETE /items/:id
+    ```json
+    {
+      "items": [
+        {
+          "id": "item_id",
+          "name": "Item Name",
+          "description": "Item Description",
+          "createdAt": "2023-01-01T00:00:00Z"
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 10,
+        "totalPages": 5,
+        "totalItems": 50
+      }
+    }
+    ```
 
-Description: Delete an item.
+- **Create Item**
+  - **Endpoint:** POST /items
+  - **Headers:**
 
-Headers:
+    ```makefile
+    Authorization: Bearer YOUR_JWT_TOKEN
+    ```
 
-makefile
-Copy code
-Authorization: Bearer YOUR_JWT_TOKEN
-Parameters:
+  - **Body:**
 
-id (string): ID of the item to delete.
-Response:
+    ```json
+    {
+      "name": "New Item",
+      "description": "Description of the new item"
+    }
+    ```
 
-json
-Copy code
-{
-  "message": "Item deleted successfully"
-}
-Error Handling
-Errors are returned with appropriate HTTP status codes and a JSON response:
+  - **Response:**
 
-json
-Copy code
+    ```json
+    {
+      "message": "Item created successfully",
+      "item": {
+        "id": "item_id",
+        "name": "New Item",
+        "description": "Description of the new item",
+        "createdAt": "2023-01-01T00:00:00Z"
+      }
+    }
+    ```
+
+#### Error Handling
+
+Errors are returned with appropriate HTTP status codes and a JSON body:
+
+```json
 {
   "error": {
     "status": 400,
     "message": "Detailed error message"
   }
 }
-Common Error Codes:
+```
 
-400 Bad Request: Invalid request parameters.
-401 Unauthorized: Authentication failed or missing token.
-403 Forbidden: Insufficient permissions.
-404 Not Found: Resource not found.
-500 Internal Server Error: Server-side error.
-Examples
-Login Example
-bash
-Copy code
-curl -X POST <https://api.yourapp.com/v1/auth/login> \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "<user@example.com>",
-    "password": "your_password"
-  }'
-Get Items Example
-bash
-Copy code
-curl -X GET <https://api.yourapp.com/v1/items?page=1&limit=10> \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-Create Item Example
-bash
-Copy code
-curl -X POST <https://api.yourapp.com/v1/items> \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "name": "New Item",
-    "description": "Description of the new item"
-  }'
-Contact
-For any questions or issues, please contact the backend team:
+#### Contact
 
-Email: <backend-team@yourapp.com>
-Slack: #backend-support
+For any questions or issues, contact the backend team:
+
+- Email: <backend-team@yourapp.com>
+- Slack: #backend-support
