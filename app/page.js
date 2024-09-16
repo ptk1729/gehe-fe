@@ -11,6 +11,7 @@ import { RiEdit2Fill } from 'react-icons/ri'
 import { TiTick } from 'react-icons/ti'
 
 export default function Home() {
+  const webURL = process.env.webURL
   const [originalUrl, setOriginalUrl] = useState('')
   const [URLs, setURLs] = useState([])
   const [shortenedUrl, setShortenedUrl] = useState('')
@@ -33,7 +34,7 @@ export default function Home() {
   async function fetchAllURLs() {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_WEB_URL + 'shortener/all',
+        process.env.NEXT_PUBLIC_API_BASE_URL + '/shortener/all',
         {
           method: 'GET',
           headers: {
@@ -49,23 +50,36 @@ export default function Home() {
     }
   }
 
+  async function fetchAllURLs() {
+    try {
+      const response = await fetch(process.env.webURL + 'shortener/all', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      const urls = await response.json()
+      setURLs(urls)
+    } catch (error) {
+      console.error('Error fetching URLs:', error)
+    }
+  }
+
   const handleShortenUrl = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
     try {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_WEB_URL + 'shortener/new',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ originalUrl: originalUrl }),
-        }
-      )
+      const response = await fetch(process.env.webURL + 'shortener/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ originalUrl: originalUrl }),
+      })
 
       if (!response.ok) {
         throw new Error('Failed to shorten URL')
@@ -84,16 +98,13 @@ export default function Home() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_WEB_URL + `shortener/${id}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+      const response = await fetch(process.env.webURL + `shortener/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
       if (!response.ok) {
         throw new Error('Delete to shorten URL')
@@ -116,7 +127,7 @@ export default function Home() {
   // const handleEditUrl = async (e) => {
   //   try {
   //     const response = await fetch(
-  //       process.env.NEXT_PUBLIC_WEB_URL + `shortener/${id}`,
+  //       process.env.webURL + `shortener/${id}`,
   //       {
   //         method: 'PATCH',
   //         headers: {
