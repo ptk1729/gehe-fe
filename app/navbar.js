@@ -54,9 +54,10 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Sign In and Sign Up Buttons */}
             {token ? (
               <>
+                {/* Sign Out Button */}
+
                 <button
                   onClick={handleSignOut}
                   className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
@@ -66,16 +67,20 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/signin">
-                  <button className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
-                    Sign In
-                  </button>
-                </Link>
-                <Link href="/signup">
-                  <button className="bg-teal-500 hover:bg-teal-700 text-white px-3 py-2 rounded-md text-sm font-medium">
-                    Sign Up
-                  </button>
-                </Link>
+                {/* Sign In and Sign Up Buttons */}
+
+                <div className="flex items-center px-4 space-x-4">
+                  <Link href="/signin">
+                    <button className="w-full text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-base font-medium">
+                      Sign In
+                    </button>
+                  </Link>
+                  <Link href="/signup">
+                    <button className="w-full bg-teal-500 hover:bg-teal-700 text-white px-3 py-2 rounded-md text-base font-medium">
+                      Sign Up
+                    </button>
+                  </Link>
+                </div>
               </>
             )}
           </div>
