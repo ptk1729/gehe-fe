@@ -1,8 +1,10 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Gehe.fyi Frontend
+
+This is the frontend for the [Gehe.fyi](https://gehe.fyi/) project, a URL shortener bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+To start the development server:
 
 ```bash
 npm run dev
@@ -14,23 +16,215 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) in your browser to see the application in action.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Edit the page by modifying `app/page.js`. The page updates automatically as you make changes.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This project utilizes [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) for automatic optimization and loading of the Inter font from Google Fonts.
 
-## Learn More
+## Backend Server API Documentation
 
-To learn more about Next.js, take a look at the following resources:
+This section is for frontend developers who need to interact with the backend APIs.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Base URL
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+All API requests should be sent to:
 
-## Deploy on Vercel
+```
+https://api.yourapp.com/v1
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Authentication
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+All endpoints, except for login and registration, require authentication using a JSON Web Token (JWT). Include the token in the Authorization header:
+
+```makefile
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+### API Endpoints
+
+#### User Authentication
+
+- **Login**
+  - **Endpoint:** POST /auth/login
+  - **Body:**
+
+    ```json
+    {
+      "email": "user@example.com",
+      "password": "your_password"
+    }
+    ```
+
+  - **Response:**
+
+    ```json
+    {
+      "token": "jwt_token",
+      "user": {
+        "id": "user_id",
+        "name": "John Doe",
+        "email": "user@example.com"
+      }
+    }
+    ```
+
+- **Register**
+  - **Endpoint:** POST /auth/register
+  - **Body:**
+
+    ```json
+    {
+      "name": "John Doe",
+      "email": "user@example.com",
+      "password": "your_password"
+    }
+    ```
+
+  - **Response:**
+
+    ```json
+    {
+      "message": "User registered successfully",
+      "user": {
+        "id": "user_id",
+        "name": "John Doe",
+        "email": "user@example.com"
+      }
+    }
+    ```
+
+#### User Profile
+
+- **Get User Profile**
+  - **Endpoint:** GET /users/me
+  - **Headers:**
+
+    ```makefile
+    Authorization: Bearer YOUR_JWT_TOKEN
+    ```
+
+  - **Response:**
+
+    ```json
+    {
+      "id": "user_id",
+      "name": "John Doe",
+      "email": "user@example.com",
+      "createdAt": "2023-01-01T00:00:00Z"
+    }
+    ```
+
+- **Update User Profile**
+  - **Endpoint:** PUT /users/me
+  - **Headers:**
+
+    ```makefile
+    Authorization: Bearer YOUR_JWT_TOKEN
+    ```
+
+  - **Body:**
+
+    ```json
+    {
+      "name": "Jane Doe",
+      "password": "new_password"
+    }
+    ```
+
+  - **Response:**
+
+    ```json
+    {
+      "message": "Profile updated successfully",
+      "user": {
+        "id": "user_id",
+        "name": "Jane Doe",
+        "email": "user@example.com"
+      }
+    }
+    ```
+
+#### Items Management
+
+- **Get Items**
+  - **Endpoint:** GET /items
+  - **Headers:**
+
+    ```makefile
+    Authorization: Bearer YOUR_JWT_TOKEN
+    ```
+
+  - **Query Parameters:** Page (integer, optional), Limit (integer, optional)
+  - **Response:**
+
+    ```json
+    {
+      "items": [
+        {
+          "id": "item_id",
+          "name": "Item Name",
+          "description": "Item Description",
+          "createdAt": "2023-01-01T00:00:00Z"
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 10,
+        "totalPages": 5,
+        "totalItems": 50
+      }
+    }
+    ```
+
+- **Create Item**
+  - **Endpoint:** POST /items
+  - **Headers:**
+
+    ```makefile
+    Authorization: Bearer YOUR_JWT_TOKEN
+    ```
+
+  - **Body:**
+
+    ```json
+    {
+      "name": "New Item",
+      "description": "Description of the new item"
+    }
+    ```
+
+  - **Response:**
+
+    ```json
+    {
+      "message": "Item created successfully",
+      "item": {
+        "id": "item_id",
+        "name": "New Item",
+        "description": "Description of the new item",
+        "createdAt": "2023-01-01T00:00:00Z"
+      }
+    }
+    ```
+
+#### Error Handling
+
+Errors are returned with appropriate HTTP status codes and a JSON body:
+
+```json
+{
+  "error": {
+    "status": 400,
+    "message": "Detailed error message"
+  }
+}
+```
+
+#### Contact
+
+For any questions or issues, contact the backend team:
+
+- Email: <backend-team@yourapp.com>
+- Slack: #backend-support

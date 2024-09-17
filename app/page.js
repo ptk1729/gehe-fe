@@ -11,7 +11,7 @@ export default function Home() {
   const [originalUrl, setOriginalUrl] = useState('')
   const [URLs, setURLs] = useState([])
   // const {  } = useContext(AuthContext);
-
+    const webURL = process.env.NEXT_PUBLIC_WEB_URL
   const [shortenedUrl, setShortenedUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -131,12 +131,12 @@ export default function Home() {
               >
                 <p className="text-gray-700 mb-2">Your shortened URL:</p>
                 <a
-                  href={'https://gehe.fyi/' + shortUrl}
+                          href={webURL + shortUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-teal-500 hover:text-teal-700 break-all"
                 >
-                  {'https://gehe.fyi/' + shortUrl}
+                          {webURL + shortUrl}
                 </a>
                 <p className="text-gray-700 mb-2">Original URL:</p>
                 <a
