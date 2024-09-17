@@ -15,7 +15,7 @@ import Navbar from "./navbar"
 // });
 
 export const metadata = {
-  title: "Gehe.fyi url shortener",
+  title: "Gehe.fyi",
   description: "A simple to use url shortener service",
 };
 
