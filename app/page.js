@@ -34,7 +34,7 @@ export default function Home() {
   async function fetchAllURLs() {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_BASE_URL + '/shortener/all',
+        process.env.NEXT_PUBLIC_WEB_URL + 'shortener/all',
         {
           method: 'GET',
           headers: {
