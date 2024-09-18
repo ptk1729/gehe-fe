@@ -11,7 +11,7 @@ import { RiEdit2Fill } from 'react-icons/ri'
 import { TiTick } from 'react-icons/ti'
 
 export default function Home() {
-  const webURL = process.env.webURL
+  const webURL = process.env.NEXT_PUBLIC_API_BASE_URL
   const [originalUrl, setOriginalUrl] = useState('')
   const [URLs, setURLs] = useState([])
   const [shortenedUrl, setShortenedUrl] = useState('')
@@ -34,7 +34,7 @@ export default function Home() {
   async function fetchAllURLs() {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_WEB_URL + 'shortener/all',
+        process.env.NEXT_PUBLIC_WEB_URL + '/shortener/all',
         {
           method: 'GET',
           headers: {
@@ -52,7 +52,7 @@ export default function Home() {
 
   async function fetchAllURLs() {
     try {
-      const response = await fetch(process.env.webURL + 'shortener/all', {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/shortener/all', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export default function Home() {
     setError(null)
 
     try {
-      const response = await fetch(process.env.webURL + 'shortener/new', {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/shortener/new', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export default function Home() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(process.env.webURL + `shortener/${id}`, {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + `/shortener/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
