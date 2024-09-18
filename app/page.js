@@ -3,20 +3,24 @@
 
 import { useContext, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
-import TimeAgo from './timeAgo'
+import { formatDistanceToNow } from 'date-fns'
 import { AuthContext } from './AuthContext'
 import { useRouter } from 'next/navigation'
+import { MdDelete } from 'react-icons/md'
+import { RiEdit2Fill } from 'react-icons/ri'
+import { TiTick } from 'react-icons/ti'
 
 export default function Home() {
   const [originalUrl, setOriginalUrl] = useState('')
   const [URLs, setURLs] = useState([])
-  // const {  } = useContext(AuthContext);
-
   const [shortenedUrl, setShortenedUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [token, setToken] = useState(Cookies.get('jwt'))
+  const [deletedUrl, setDeletedUrl] = useState('')
   const router = useRouter()
+  const [isEditable, setIsEditable] = useState(false)
+  const [editableId, setEditableId] = useState(null)
 
   useEffect(() => {
     if (!token) {
@@ -29,7 +33,7 @@ export default function Home() {
   async function fetchAllURLs() {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_BASE_URL + '/shortener/all',
+        process.env.NEXT_PUBLIC_WEB_URL + 'shortener/all',
         {
           method: 'GET',
           headers: {
@@ -49,11 +53,10 @@ export default function Home() {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    // setShortenedUrl("")
 
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_BASE_URL + '/shortener/new',
+        process.env.NEXT_PUBLIC_WEB_URL + 'shortener/new',
         {
           method: 'POST',
           headers: {
@@ -69,7 +72,8 @@ export default function Home() {
       }
 
       const data = await response.json()
-      // setShortenedUrl(data.shortUrl)
+      console.log(data)
+      setShortenedUrl(data.shortUrl)
       fetchAllURLs()
     } catch (err) {
       setError(err.message || 'An unexpected error occurred')
@@ -77,10 +81,53 @@ export default function Home() {
       setLoading(false)
     }
   }
-  useEffect(() => {
-    console.log('use effect')
-    fetchAllURLs()
-  }, [])
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_WEB_URL + `shortener/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Delete to shorten URL')
+      }
+
+      setDeletedUrl('URL successfully deleted. ')
+    } catch (error) {
+      setError(error.message || 'An unexpected error occurred')
+    }
+
+    // const updatedURLs = URLs.filter((url) => url.id !== id)
+    // setURLs(updatedURLs)
+  }
+
+  // const toggleEditMode = (id) => {
+  //   setIsEditable(!isEditable)
+  //   setEditableId(id)
+  // }
+
+  // const handleEditUrl = async (e) => {
+  //   try {
+  //     const response = await fetch(
+  //       process.env.NEXT_PUBLIC_WEB_URL + `shortener/${id}`,
+  //       {
+  //         method: 'PATCH',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: JSON.stringify({ originalUrl: originalUrl }),
+  //       }
+  //     )
+  //   } catch (err) {}
+  // }
 
   return (
     <>
@@ -110,49 +157,151 @@ export default function Home() {
           </div>
         </form>
         {error && <p className="text-red-500 mt-4">{error}</p>}
-        {URLs.length > 0 &&
-          URLs.sort(
-            (a, b) =>
-              new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
-          ).map(
-            ({
-              archived,
-              clicks,
-              createdAt,
-              id,
-              originalUrl,
-              shortUrl,
-              updatedAt,
-              userId,
-            }) => (
-              <div
-                key={id}
-                className="mt-8 p-4 bg-white rounded shadow-md text-center"
-              >
-                <p className="text-gray-700 mb-2">Your shortened URL:</p>
-                <a
-                  href={'https://gehe.fyi/' + shortUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-teal-500 hover:text-teal-700 break-all"
-                >
-                  {'https://gehe.fyi/' + shortUrl}
-                </a>
-                <p className="text-gray-700 mb-2">Original URL:</p>
-                <a
-                  href={originalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-teal-500 hover:text-teal-700 break-all"
-                >
-                  {originalUrl}
-                </a>
-                <p className="text-sm">
-                  <TimeAgo date={updatedAt} />
-                </p>
-              </div>
-            )
-          )}
+        {shortenedUrl && (
+          <p className="mt-4 text-green-500">Shortened URL: {shortenedUrl}</p>
+        )}
+        {
+          <div className="my-10 border-2 rounded-3xl bg-[#fff]">
+            <div className="h-20 flex items-center mx-4">
+              <h2 className="font-bold">Shortify History</h2>
+            </div>
+            <table className="w-full max-w-5xl table-auto border-collapse border-none border-gray-400">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border-tborder-gray-300 px-4 py-2">URL Id</th>
+                  <th className="border-tborder-gray-300 px-4 py-2">
+                    Original URL
+                  </th>
+                  <th className="border-tborder-gray-300 px-4 py-2">
+                    Shortened URL
+                  </th>
+                  <th className="border-tborder-gray-300 px-4 py-2">Clicks</th>
+                  <th className="border-tborder-gray-300 px-4 py-2">
+                    Archived
+                  </th>
+                  {/* <th className="border-tborder-gray-300 px-4 py-2">User Id</th> */}
+                  <th className="border-tborder-gray-300 px-4 py-2">
+                    Creation Date
+                  </th>
+                  <th className="border-tborder-gray-300 px-4 py-2">
+                    Last Updated
+                  </th>
+                  <th className="border-tborder-gray-300 px-4 py-2"></th>
+                  <th className="border-tborder-gray-300 px-4 py-2"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {URLs.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="8"
+                      className="text-center py-4 text-gray-500 w-full"
+                    >
+                      No URLs available
+                    </td>
+                  </tr>
+                ) : (
+                  URLs.sort(
+                    (a, b) =>
+                      new Date(b.updatedAt).getTime() -
+                      new Date(a.updatedAt).getTime()
+                  ).map(
+                    ({
+                      archived,
+                      clicks,
+                      createdAt,
+                      id,
+                      originalUrl,
+                      shortUrl,
+                      updatedAt,
+                      userId,
+                    }) => (
+                      <tr key={id} className="text-center">
+                        <td className="border-t border-gray-300 px-4 py-2">
+                          {id}
+                        </td>
+                        <td className="border-t border-gray-300 px-4 py-2 break-all">
+                          <a
+                            href={originalUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-teal-500 hover:text-teal-700 break-all"
+                          >
+                            {originalUrl}
+                          </a>
+                        </td>
+                        <td className="border-t border-gray-300 px-4 py-2">
+                          {/* {isEditable && editableId === id ? ( */}
+                          <input
+                            type="text"
+                            value={shortUrl}
+                            onChange={''}
+                            className="border p-2 bg-white rounded"
+                          />
+                          {/* ) : ( */}
+                          <a
+                            href={'https://gehe.fyi/' + shortUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-teal-500 hover:text-teal-700 break-all"
+                          >
+                            {'https://gehe.fyi/' + shortUrl}
+                          </a>
+                          {/* )} */}
+                        </td>
+
+                        <td className="border-t border-gray-300 px-4 py-2">
+                          {clicks}
+                        </td>
+                        <td className="border-t border-gray-300 px-4 py-2">
+                          {archived ? 'Yes' : 'No'}
+                        </td>
+                        {/* <td className="border-tborder-gray-300 px-4 py-2">
+                      {userId}
+                    </td> */}
+                        <td className="border-t border-gray-300 px-4 py-2">
+                          Created {formatDistanceToNow(new Date(createdAt))} ago
+                        </td>
+                        <td className="border-t border-gray-300 px-4 py-2">
+                          Updated at {formatDistanceToNow(new Date(updatedAt))}{' '}
+                          ago
+                        </td>
+                        <td className="border-t border-gray-300 px-4 py-2">
+                          <span className="text-xl">
+                            <MdDelete
+                              className="text-xl text-teal-500 hover:text-teal-700 cursor-pointer"
+                              onClick={() => handleDelete(id)}
+                            />
+                          </span>
+                        </td>
+                        {/* <td className="border-t border-gray-300 px-4 py-2">
+                          <span className="text-xl">
+                            {isEditable ? (
+                              <TiTick
+                                className="text-xl text-teal-500
+                            hover:text-teal-700 cursor-pointer"
+                              />
+                            ) : (
+                              <RiEdit2Fill
+                                className="text-xl text-teal-500
+                            hover:text-teal-700 cursor-pointer"
+                                onClick={() => toggleEditMode(id)}
+                              />
+                            )}
+                          </span>
+                        </td> */}
+                      </tr>
+                    )
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
+        }
+
+        {deletedUrl && (
+          <p className="mt-4 text-green-500">Shortened URL: {deletedUrl}</p>
+        )}
       </main>
     </>
   )
