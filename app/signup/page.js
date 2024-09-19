@@ -1,18 +1,21 @@
 // pages/signup.js or app/signup/page.js
 'use client'
 
-import { useState, useContext } from 'react'
+import { useContext, useState } from 'react'
 // import { AuthContext } from '../context/AuthContext'
 // import { useRouter } from 'next/router' // For pages directory
-import { AuthContext } from '../AuthContext'
 // For app directory, use: import { useRouter } from 'next/navigation';
 // import { useState, useContext } from 'react'
 // import { AuthContext } from '../../context/AuthContext'
+
+import { UserContext } from '../UserContext'
 import { useRouter } from 'next/navigation'
 
 export default function Signup() {
-  const { loginSaveCookie } = useContext(AuthContext)
+  const webURL = process.env.NEXT_PUBLIC_WEB_URL
   const router = useRouter()
+
+  const { updateUser } = useContext(UserContext)
 
   const [formData, setFormData] = useState({
     firstname: '',
@@ -29,24 +32,23 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
-    // console.log(, process.env.BASE_URL)
-    // fetch("http://localhost:5001/test-cors")
-    //     .then(res => res.json())
-    //     .then(console.log)
-    //     .catch(console.error)
-    //     .finally(console.log)
+
+    // // console.log(, process.env.BASE_URL)
+    // // fetch("http://localhost:5001/test-cors")
+    // //     .then(res => res.json())
+    // //     .then(console.log)
+    // //     .catch(console.error)
+    // //     .finally(console.log)
+
     try {
-      const res = await fetch(
-        process.env.NEXT_PUBLIC_WEB_URL + 'auth/register',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify(formData),
-        }
-      )
+      const res = await fetch(webURL + 'auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData),
+      })
 
       if (!res.ok) {
         const errorData = await res.json()
@@ -54,10 +56,11 @@ export default function Signup() {
       }
 
       const data = await res.json()
-      console.log(data)
 
-      loginSaveCookie(data.jwt) // Store the JWT
-      router.push('/') // Redirect to home page
+      if (data.message) {
+        updateUser(formData)
+        router.push('/email-verification')
+      }
     } catch (err) {
       setError(err.message)
     }
@@ -128,7 +131,9 @@ export default function Signup() {
               className="w-full px-3 py-2 border rounded focus:outline-none focus:border-teal-500"
             />
           </div>
+
           {error && <p className="text-red-500 mb-4">{error}</p>}
+
           <button
             type="submit"
             className="w-full bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded"

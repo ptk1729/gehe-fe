@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { MdDelete } from 'react-icons/md'
 import { RiEdit2Fill } from 'react-icons/ri'
 import { TiTick } from 'react-icons/ti'
+import TimeAgo from './timeAgo'
 
 export default function Home() {
   const webURL = process.env.NEXT_PUBLIC_WEB_URL
@@ -263,11 +264,10 @@ export default function Home() {
                       {userId}
                     </td> */}
                         <td className="border-t border-gray-300 px-4 py-2">
-                          Created {formatDistanceToNow(new Date(createdAt))} ago
+                          <TimeAgo date={createdAt} title={'Created at'} />
                         </td>
                         <td className="border-t border-gray-300 px-4 py-2">
-                          Updated at {formatDistanceToNow(new Date(updatedAt))}{' '}
-                          ago
+                          <TimeAgo date={updatedAt} title={'Updated'} />
                         </td>
                         <td className="border-t border-gray-300 px-4 py-2">
                           <span className="text-xl">
