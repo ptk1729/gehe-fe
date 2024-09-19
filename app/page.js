@@ -203,16 +203,7 @@ export default function Home() {
                 </tr>
               </thead>
               <tbody>
-                {URLs.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan="8"
-                      className="text-center py-4 text-gray-500 w-full"
-                    >
-                      No URLs available
-                    </td>
-                  </tr>
-                ) : (
+                {URLs.length > 0 ? (
                   URLs.sort(
                     (a, b) =>
                       new Date(b.updatedAt).getTime() -
@@ -306,6 +297,15 @@ export default function Home() {
                       </tr>
                     )
                   )
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="8"
+                      className="text-center py-4 text-gray-500 w-full"
+                    >
+                      No URLs available
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
