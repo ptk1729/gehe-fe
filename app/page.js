@@ -11,7 +11,7 @@ import { RiEdit2Fill } from 'react-icons/ri'
 import { TiTick } from 'react-icons/ti'
 
 export default function Home() {
-  const webURL = process.env.NEXT_PUBLIC_API_BASE_URL
+  const webURL = process.env.NEXT_PUBLIC_WEB_URL
   const [originalUrl, setOriginalUrl] = useState('')
   const [URLs, setURLs] = useState([])
   const [shortenedUrl, setShortenedUrl] = useState('')
@@ -22,6 +22,7 @@ export default function Home() {
   const router = useRouter()
   const [isEditable, setIsEditable] = useState(false)
   const [editableId, setEditableId] = useState(null)
+  const [newShortenUrl, setNewShortenUrl] = useState('')
 
   useEffect(() => {
     if (!token) {
@@ -33,26 +34,7 @@ export default function Home() {
 
   async function fetchAllURLs() {
     try {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_WEB_URL + '/shortener/all',
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      const urls = await response.json()
-      setURLs(urls)
-    } catch (error) {
-      console.error('Error fetching URLs:', error)
-    }
-  }
-
-  async function fetchAllURLs() {
-    try {
-      const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/shortener/all', {
+      const response = await fetch(webURL + 'shortener/all', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +54,7 @@ export default function Home() {
     setError(null)
 
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/shortener/new', {
+      const response = await fetch(webURL + 'shortener/new', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +68,6 @@ export default function Home() {
       }
 
       const data = await response.json()
-      console.log(data)
       setShortenedUrl(data.shortUrl)
       fetchAllURLs()
     } catch (err) {
@@ -98,7 +79,7 @@ export default function Home() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + `/shortener/${id}`, {
+      const response = await fetch(webURL + `shortener/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -111,34 +92,54 @@ export default function Home() {
       }
 
       setDeletedUrl('URL successfully deleted. ')
+
+      const updatedURLs = URLs.filter((url) => url.id !== id)
+      setURLs(updatedURLs)
     } catch (error) {
       setError(error.message || 'An unexpected error occurred')
     }
-
-    // const updatedURLs = URLs.filter((url) => url.id !== id)
-    // setURLs(updatedURLs)
   }
 
-  // const toggleEditMode = (id) => {
-  //   setIsEditable(!isEditable)
-  //   setEditableId(id)
-  // }
+  const toggleEditMode = (id, currentShortUrl) => {
+    setIsEditable(!isEditable)
+    setEditableId(id)
+    setNewShortenUrl(currentShortUrl)
+  }
 
-  // const handleEditUrl = async (e) => {
-  //   try {
-  //     const response = await fetch(
-  //       process.env.webURL + `shortener/${id}`,
-  //       {
-  //         method: 'PATCH',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         body: JSON.stringify({ originalUrl: originalUrl }),
-  //       }
-  //     )
-  //   } catch (err) {}
-  // }
+  const handleEditUrl = async (id) => {
+    try {
+      const response = await fetch(webURL + `shortener/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          originalUrl: originalUrl,
+          shortUrl: newShortenUrl,
+        }),
+      })
+
+      const data = await response.json()
+
+      const updatedURLs = URLs.map((url) => {
+        if (url.id === id) {
+          return {
+            ...url,
+
+            shortUrl: data.shortUrl,
+            updatedAt: new Date(), // Update the timestamp
+          }
+        }
+        return url
+      })
+
+      setURLs(updatedURLs)
+      setIsEditable(!isEditable)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   return (
     <>
@@ -242,23 +243,23 @@ export default function Home() {
                           </a>
                         </td>
                         <td className="border-t border-gray-300 px-4 py-2">
-                          {/* {isEditable && editableId === id ? ( */}
-                          <input
-                            type="text"
-                            value={shortUrl}
-                            onChange={''}
-                            className="border p-2 bg-white rounded"
-                          />
-                          {/* ) : ( */}
-                          <a
-                            href={'https://gehe.fyi/' + shortUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-teal-500 hover:text-teal-700 break-all"
-                          >
-                            {'https://gehe.fyi/' + shortUrl}
-                          </a>
-                          {/* )} */}
+                          {isEditable && editableId === id ? (
+                            <input
+                              type="text"
+                              value={newShortenUrl}
+                              onChange={(e) => setNewShortenUrl(e.target.value)}
+                              className="border p-2 bg-white rounded"
+                            />
+                          ) : (
+                            <a
+                              href={'https://gehe.fyi/' + shortUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-teal-500 hover:text-teal-700 break-all"
+                            >
+                              {shortUrl}
+                            </a>
+                          )}
                         </td>
 
                         <td className="border-t border-gray-300 px-4 py-2">
@@ -285,22 +286,23 @@ export default function Home() {
                             />
                           </span>
                         </td>
-                        {/* <td className="border-t border-gray-300 px-4 py-2">
+                        <td className="border-t border-gray-300 px-4 py-2">
                           <span className="text-xl">
-                            {isEditable ? (
+                            {isEditable && editableId === id ? (
                               <TiTick
                                 className="text-xl text-teal-500
                             hover:text-teal-700 cursor-pointer"
+                                onClick={() => handleEditUrl(id)}
                               />
                             ) : (
                               <RiEdit2Fill
                                 className="text-xl text-teal-500
                             hover:text-teal-700 cursor-pointer"
-                                onClick={() => toggleEditMode(id)}
+                                onClick={() => toggleEditMode(id, shortUrl)}
                               />
                             )}
                           </span>
-                        </td> */}
+                        </td>
                       </tr>
                     )
                   )
