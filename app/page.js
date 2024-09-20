@@ -152,7 +152,7 @@ export default function Home() {
     try {
       for (let id of selectedUrls) {
         await fetch(webURL + `shortener/${id}/archive`, {
-          method: 'DELETE',
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
