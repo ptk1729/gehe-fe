@@ -1,7 +1,8 @@
 // import localFont from "next/font/local";
-import AuthProvider from "./AuthContext"
-import "./globals.css";
-import Navbar from "./navbar"
+import AuthProvider from './AuthContext'
+import UserProvider from './UserContext'
+import './globals.css'
+import Navbar from './navbar'
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -15,22 +16,24 @@ import Navbar from "./navbar"
 // });
 
 export const metadata = {
-  title: "Gehe.fyi",
-  description: "A simple to use url shortener service",
-};
+  title: 'Gehe.fyi',
+  description: 'A simple to use url shortener service',
+}
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <title>{metadata.title}</title>
       <body
-        // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-        <Navbar />
-          {children}
-          </AuthProvider>
+          <UserProvider>
+            <Navbar />
+            {children}
+          </UserProvider>
+        </AuthProvider>
       </body>
     </html>
-  );
+  )
 }
