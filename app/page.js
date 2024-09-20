@@ -24,6 +24,7 @@ export default function Home() {
   const [isEditable, setIsEditable] = useState(false)
   const [editableId, setEditableId] = useState(null)
   const [newShortenUrl, setNewShortenUrl] = useState('')
+  const [selectedUrls, setSelectedUrls] = useState([])
 
   useEffect(() => {
     if (!token) {
@@ -78,26 +79,31 @@ export default function Home() {
     }
   }
 
-  const handleDelete = async (id) => {
+  const handleDeleteSelected = async () => {
     try {
-      const response = await fetch(webURL + `shortener/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error('Delete to shorten URL')
+      for (let id of selectedUrls) {
+        await fetch(webURL + `shortener/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        })
       }
-
-      setDeletedUrl('URL successfully deleted. ')
-
-      const updatedURLs = URLs.filter((url) => url.id !== id)
+      // Filter out the deleted URLs from the state
+      const updatedURLs = URLs.filter((url) => !selectedUrls.includes(url.id))
       setURLs(updatedURLs)
+      setSelectedUrls([]) // Clear the selection
     } catch (error) {
-      setError(error.message || 'An unexpected error occurred')
+      console.error('Error deleting URLs:', error)
+    }
+  }
+
+  const handleCheckboxChange = (id) => {
+    if (selectedUrls.includes(id)) {
+      setSelectedUrls(selectedUrls.filter((selectedId) => selectedId !== id))
+    } else {
+      setSelectedUrls([...selectedUrls, id])
     }
   }
 
@@ -142,9 +148,29 @@ export default function Home() {
     }
   }
 
+  const handleArchiveSelected = async () => {
+    try {
+      for (let id of selectedUrls) {
+        await fetch(webURL + `shortener/${id}/archive`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      }
+      // Filter out the deleted URLs from the state
+      const updatedURLs = URLs.filter((url) => !selectedUrls.includes(url.id))
+      setURLs(updatedURLs)
+      setSelectedUrls([]) // Clear the selection
+    } catch (error) {
+      console.error('Error Archive URLs:', error)
+    }
+  }
+
   return (
     <>
-      <main className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
+      <main className="relative flex flex-col items-center min-h-screen bg-gray-100 p-4">
         <h1 className="text-4xl font-bold mb-8 mt-6 text-gray-800">
           URL Shortener
         </h1>
@@ -181,6 +207,13 @@ export default function Home() {
             <table className="w-full max-w-5xl table-auto border-collapse border-none border-gray-400">
               <thead>
                 <tr className="bg-gray-200">
+                  <th className="border-tborder-gray-300 px-4 py-2">
+                    <input
+                      type="checkbox"
+                      className="transform scale-150"
+                      checked={selectedUrls.length === URLs.length}
+                    />
+                  </th>
                   <th className="border-tborder-gray-300 px-4 py-2">URL Id</th>
                   <th className="border-tborder-gray-300 px-4 py-2">
                     Original URL
@@ -221,6 +254,13 @@ export default function Home() {
                       userId,
                     }) => (
                       <tr key={id} className="text-center">
+                        <td className="border-tborder-gray-300 px-4 py-2">
+                          <input
+                            type="checkbox"
+                            className="transform scale-150"
+                            onChange={() => handleCheckboxChange(id)}
+                          />
+                        </td>
                         <td className="border-t border-gray-300 px-4 py-2">
                           {id}
                         </td>
@@ -269,14 +309,14 @@ export default function Home() {
                         <td className="border-t border-gray-300 px-4 py-2">
                           <TimeAgo date={updatedAt} title={'Updated'} />
                         </td>
-                        <td className="border-t border-gray-300 px-4 py-2">
+                        {/* <td className="border-t border-gray-300 px-4 py-2">
                           <span className="text-xl">
                             <MdDelete
                               className="text-xl text-teal-500 hover:text-teal-700 cursor-pointer"
                               onClick={() => handleDelete(id)}
                             />
                           </span>
-                        </td>
+                        </td> */}
                         <td className="border-t border-gray-300 px-4 py-2">
                           <span className="text-xl">
                             {isEditable && editableId === id ? (
@@ -314,6 +354,36 @@ export default function Home() {
 
         {deletedUrl && (
           <p className="mt-4 text-green-500">Shortened URL: {deletedUrl}</p>
+        )}
+
+        {selectedUrls.length > 0 && (
+          <div
+            className={`action_menu absolute transition-transform duration-500 ease-in-out transform bottom-[-100%] flex justify-between items-center text-teal-500 bg-white rounded w-[500px] h-20 px-3 py-6 border ${
+              selectedUrls.length > 0 ? 'bottom-[13%]' : ''
+            }`}
+          >
+            <div>
+              <span className="p-1 bg-teal-500 text-white rounded">
+                {selectedUrls.length}
+              </span>{' '}
+              document selected
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                className="px-2 py-1 border rounded bg-teal-500 hover:bg-teal-700 text-white"
+                onClick={handleDeleteSelected}
+              >
+                Delete
+              </button>
+              <button
+                className="px-2 py-1 border rounded hover:bg-[#f3f4f6]"
+                onClick={handleArchiveSelected}
+              >
+                Archive
+              </button>
+            </div>
+          </div>
         )}
       </main>
     </>
