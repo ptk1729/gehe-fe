@@ -170,7 +170,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="relative flex flex-col items-center min-h-screen bg-gray-100 p-4">
+      <main className="relative flex flex-col items-center min-h-screen bg-gray-100 pt-4 px-2">
         <h1 className="text-4xl font-bold mb-8 mt-6 text-gray-800">
           URL Shortener
         </h1>
@@ -199,158 +199,114 @@ export default function Home() {
         {shortenedUrl && (
           <p className="mt-4 text-green-500">Shortened URL: {shortenedUrl}</p>
         )}
-        {
-          <div className="my-10 border-2 rounded-3xl bg-[#fff]">
+        {URLs.length > 0 ? (
+          <div className="my-10 mx-2 w-full max-w-4xl border-2 rounded-3xl bg-white overflow-x-auto">
             <div className="h-20 flex items-center mx-4">
               <h2 className="font-bold">Shortify History</h2>
             </div>
-            <table className="w-full max-w-5xl table-auto border-collapse border-none border-gray-400">
+            <table className="table-auto w-full border-collapse border-none">
               <thead>
                 <tr className="bg-gray-200">
-                  <th className="border-tborder-gray-300 px-4 py-2">
+                  <th className="px-4 py-2">
                     <input
                       type="checkbox"
                       className="transform scale-150"
                       checked={selectedUrls.length === URLs.length}
                     />
                   </th>
-                  <th className="border-tborder-gray-300 px-4 py-2">URL Id</th>
-                  <th className="border-tborder-gray-300 px-4 py-2">
-                    Original URL
-                  </th>
-                  <th className="border-tborder-gray-300 px-4 py-2">
-                    Shortened URL
-                  </th>
-                  <th className="border-tborder-gray-300 px-4 py-2">Clicks</th>
-                  <th className="border-tborder-gray-300 px-4 py-2">
-                    Archived
-                  </th>
-                  {/* <th className="border-tborder-gray-300 px-4 py-2">User Id</th> */}
-                  <th className="border-tborder-gray-300 px-4 py-2">
-                    Creation Date
-                  </th>
-                  <th className="border-tborder-gray-300 px-4 py-2">
-                    Last Updated
-                  </th>
-                  <th className="border-tborder-gray-300 px-4 py-2"></th>
-                  <th className="border-tborder-gray-300 px-4 py-2"></th>
+                  <th className="px-4 py-2">URL Id</th>
+                  <th className="px-4 py-2">Original URL</th>
+                  <th className="px-4 py-2">Shortened URL</th>
+                  <th className="px-4 py-2">Clicks</th>
+                  <th className="px-4 py-2">Archived</th>
+                  <th className="px-4 py-2">Creation Date</th>
+                  <th className="px-4 py-2">Last Updated</th>
+                  <th className="px-4 py-2"></th>
                 </tr>
               </thead>
               <tbody>
-                {URLs.length > 0 ? (
-                  URLs.sort(
-                    (a, b) =>
-                      new Date(b.updatedAt).getTime() -
-                      new Date(a.updatedAt).getTime()
-                  ).map(
-                    ({
-                      archived,
-                      clicks,
-                      createdAt,
-                      id,
-                      originalUrl,
-                      shortUrl,
-                      updatedAt,
-                      userId,
-                    }) => (
-                      <tr key={id} className="text-center">
-                        <td className="border-tborder-gray-300 px-4 py-2">
+                {URLs.sort(
+                  (a, b) =>
+                    new Date(b.updatedAt).getTime() -
+                    new Date(a.updatedAt).getTime()
+                ).map(
+                  ({
+                    id,
+                    originalUrl,
+                    shortUrl,
+                    clicks,
+                    archived,
+                    createdAt,
+                    updatedAt,
+                  }) => (
+                    <tr key={id} className="text-center">
+                      <td className="px-4 py-2">
+                        <input
+                          type="checkbox"
+                          className="transform scale-150"
+                          onChange={() => handleCheckboxChange(id)}
+                        />
+                      </td>
+                      <td className="px-4 py-2">{id.substring(0, 8)}...</td>
+                      <td className="px-4 py-2 break-all">
+                        <a
+                          href={originalUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-teal-500 hover:text-teal-700"
+                        >
+                          {originalUrl.substring(0, 10)}...
+                        </a>
+                      </td>
+                      <td className="px-4 py-2">
+                        {isEditable && editableId === id ? (
                           <input
-                            type="checkbox"
-                            className="transform scale-150"
-                            onChange={() => handleCheckboxChange(id)}
+                            type="text"
+                            value={newShortenUrl}
+                            onChange={(e) => setNewShortenUrl(e.target.value)}
+                            className="border p-2 rounded w-full"
                           />
-                        </td>
-                        <td className="border-t border-gray-300 px-4 py-2">
-                          {id}
-                        </td>
-                        <td className="border-t border-gray-300 px-4 py-2 break-all">
+                        ) : (
                           <a
-                            href={originalUrl}
+                            href={'https://gehe.fyi/' + shortUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-teal-500 hover:text-teal-700 break-all"
+                            className="text-teal-500 hover:text-teal-700"
                           >
-                            {originalUrl}
+                            {shortUrl}
                           </a>
-                        </td>
-                        <td className="border-t border-gray-300 px-4 py-2">
-                          {isEditable && editableId === id ? (
-                            <input
-                              type="text"
-                              value={newShortenUrl}
-                              onChange={(e) => setNewShortenUrl(e.target.value)}
-                              className="border p-2 bg-white rounded"
-                            />
-                          ) : (
-                            <a
-                              href={'https://gehe.fyi/' + shortUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-teal-500 hover:text-teal-700 break-all"
-                            >
-                              {shortUrl}
-                            </a>
-                          )}
-                        </td>
-
-                        <td className="border-t border-gray-300 px-4 py-2">
-                          {clicks}
-                        </td>
-                        <td className="border-t border-gray-300 px-4 py-2">
-                          {archived ? 'Yes' : 'No'}
-                        </td>
-                        {/* <td className="border-tborder-gray-300 px-4 py-2">
-                      {userId}
-                    </td> */}
-                        <td className="border-t border-gray-300 px-4 py-2">
-                          <TimeAgo date={createdAt} title={'Created at'} />
-                        </td>
-                        <td className="border-t border-gray-300 px-4 py-2">
-                          <TimeAgo date={updatedAt} title={'Updated'} />
-                        </td>
-                        {/* <td className="border-t border-gray-300 px-4 py-2">
-                          <span className="text-xl">
-                            <MdDelete
-                              className="text-xl text-teal-500 hover:text-teal-700 cursor-pointer"
-                              onClick={() => handleDelete(id)}
-                            />
-                          </span>
-                        </td> */}
-                        <td className="border-t border-gray-300 px-4 py-2">
-                          <span className="text-xl">
-                            {isEditable && editableId === id ? (
-                              <TiTick
-                                className="text-xl text-teal-500
-                            hover:text-teal-700 cursor-pointer"
-                                onClick={() => handleEditUrl(id)}
-                              />
-                            ) : (
-                              <RiEdit2Fill
-                                className="text-xl text-teal-500
-                            hover:text-teal-700 cursor-pointer"
-                                onClick={() => toggleEditMode(id, shortUrl)}
-                              />
-                            )}
-                          </span>
-                        </td>
-                      </tr>
-                    )
+                        )}
+                      </td>
+                      <td className="px-4 py-2">{clicks}</td>
+                      <td className="px-4 py-2">{archived ? 'Yes' : 'No'}</td>
+                      <td className="px-4 py-2">
+                        <TimeAgo date={createdAt} title={'Created at'} />
+                      </td>
+                      <td className="px-4 py-2">
+                        <TimeAgo date={updatedAt} title={'Updated'} />
+                      </td>
+                      <td className="px-4 py-2">
+                        {isEditable && editableId === id ? (
+                          <TiTick
+                            className="text-xl text-teal-500 hover:text-teal-700 cursor-pointer"
+                            onClick={() => handleEditUrl(id)}
+                          />
+                        ) : (
+                          <RiEdit2Fill
+                            className="text-xl text-teal-500 hover:text-teal-700 cursor-pointer"
+                            onClick={() => toggleEditMode(id, shortUrl)}
+                          />
+                        )}
+                      </td>
+                    </tr>
                   )
-                ) : (
-                  <tr>
-                    <td
-                      colSpan="8"
-                      className="text-center py-4 text-gray-500 w-full"
-                    >
-                      No URLs available
-                    </td>
-                  </tr>
                 )}
               </tbody>
             </table>
           </div>
-        }
+        ) : (
+          <p>No URL Available</p>
+        )}
 
         {deletedUrl && (
           <p className="mt-4 text-green-500">Shortened URL: {deletedUrl}</p>
@@ -358,26 +314,26 @@ export default function Home() {
 
         {selectedUrls.length > 0 && (
           <div
-            className={`action_menu absolute transition-transform duration-500 ease-in-out transform bottom-[-100%] flex justify-between items-center text-teal-500 bg-white rounded w-[500px] h-20 px-3 py-6 border ${
-              selectedUrls.length > 0 ? 'bottom-[13%]' : ''
-            }`}
+            className={`action_menu fixed bottom-[-100%] transform transition-transform duration-500 ease-in-out ${
+              selectedUrls.length > 0 ? 'bottom-[10%] md:bottom-[13%]' : ''
+            } flex justify-between items-center text-teal-500 bg-white rounded w-full md:w-[500px] h-16 md:h-20 px-2 md:px-3 py-4 md:py-6 border`}
           >
             <div>
-              <span className="p-1 bg-teal-500 text-white rounded">
+              <span className="p-1 bg-teal-500 text-white rounded text-xs md:text-base">
                 {selectedUrls.length}
               </span>{' '}
-              document selected
+              <span className="text-xs md:text-base">document selected</span>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-2 md:gap-3">
               <button
-                className="px-2 py-1 border rounded bg-teal-500 hover:bg-teal-700 text-white"
+                className="px-2 py-1 border rounded bg-teal-500 hover:bg-teal-700 text-white text-xs md:text-base"
                 onClick={handleDeleteSelected}
               >
                 Delete
               </button>
               <button
-                className="px-2 py-1 border rounded hover:bg-[#f3f4f6]"
+                className="px-2 py-1 border rounded hover:bg-[#f3f4f6] text-xs md:text-base"
                 onClick={handleArchiveSelected}
               >
                 Archive
