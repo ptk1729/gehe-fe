@@ -49,7 +49,7 @@ function page() {
   }
 
   return (
-    <section className="flex justify-center">
+    <section className="flex flex-col items-center min-h-screen bg-[#f4f4f5]">
       {archiveURLs.length > 0 ? (
         <div className="my-10 mx-2 w-full max-w-4xl border-2 rounded-3xl bg-white overflow-x-auto">
           <div className="h-20 flex items-center mx-4">

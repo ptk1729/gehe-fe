@@ -109,6 +109,15 @@ export default function Home() {
         }),
       })
 
+      console.log(response.status)
+      if (response.status === 400) {
+        // Assuming 409 is returned by the backend when there's a duplicate URL
+        setError(
+          'Shortened URL already exists. Please choose a different name.'
+        )
+        return
+      }
+
       const data = await response.json()
 
       const updatedURLs = URLs.map((url) => {
