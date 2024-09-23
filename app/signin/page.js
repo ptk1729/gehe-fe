@@ -47,7 +47,7 @@ export default function Signin() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex items-center justify-center min-h-screen bg-[#f4f4f5] p-4">
       <div className="w-full max-w-md bg-white rounded shadow-md p-6">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Sign In</h2>
         <form onSubmit={handleSubmit}>
