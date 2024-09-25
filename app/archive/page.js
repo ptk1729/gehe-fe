@@ -5,7 +5,7 @@ import Cookies from 'js-cookie'
 import { MdDelete } from 'react-icons/md'
 import TimeAgo from '../timeAgo'
 
-function page() {
+function Archive() {
   const [archiveURLs, setArchiveURLs] = useState([])
   const [token, setToken] = useState(Cookies.get('jwt'))
   const webURL = process.env.NEXT_PUBLIC_WEB_URL
@@ -130,4 +130,4 @@ function page() {
   )
 }
 
-export default page
+export default Archive

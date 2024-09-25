@@ -60,7 +60,7 @@ export default function Verification() {
           {/* OTP Verification */}
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 mb-2">
-              We've sent a code to
+              {`We've sent a code to`}
             </label>
             <input
               type="text"
