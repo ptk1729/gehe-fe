@@ -5,7 +5,6 @@ import Cookies from 'js-cookie'
 import { MdDelete } from 'react-icons/md'
 import TimeAgo from '../timeAgo'
 
-
 function Archive() {
   const [archiveURLs, setArchiveURLs] = useState([])
   const [token, setToken] = useState(Cookies.get('jwt'))
@@ -125,11 +124,10 @@ function Archive() {
           </table>
         </div>
       ) : (
-        'fetching archive URLs...'
+        'No archive URLs'
       )}
     </section>
   )
 }
-
 
 export default Archive
