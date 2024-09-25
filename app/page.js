@@ -4,7 +4,6 @@
 import { useContext, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { formatDistanceToNow } from 'date-fns'
-import { AuthContext } from './AuthContext'
 import { useRouter } from 'next/navigation'
 import { RiEdit2Fill } from 'react-icons/ri'
 import { TiTick } from 'react-icons/ti'
@@ -27,12 +26,8 @@ export default function Home() {
   const [selectedUrls, setSelectedUrls] = useState([])
 
   useEffect(() => {
-    if (!token) {
-      router.push('/signin')
-    } else {
-      fetchAllURLs()
-    }
-  }, [token, router])
+    fetchAllURLs()
+  }, [])
 
   async function fetchAllURLs() {
     try {
@@ -45,7 +40,6 @@ export default function Home() {
       })
       const urls = await response.json()
       setURLs(urls)
-      console.log(urls)
     } catch (error) {
       console.error('Error fetching URLs:', error)
     }
@@ -226,10 +220,10 @@ export default function Home() {
           <p className="mt-4 text-green-500">Shortened URL: {shortenedUrl}</p>
         )}
         {loading ? (
-          <div class="flex flex-row gap-2 justify-center items-center">
-            <div class="w-4 h-4 rounded-full bg-teal-500 animate-bounce [animation-delay:.7s]"></div>
-            <div class="w-4 h-4 rounded-full bg-teal-500 animate-bounce [animation-delay:.3s]"></div>
-            <div class="w-4 h-4 rounded-full bg-teal-500 animate-bounce [animation-delay:.7s]"></div>
+          <div className="flex flex-row gap-2 justify-center items-center">
+            <div className="w-4 h-4 rounded-full bg-teal-500 animate-bounce [animation-delay:.7s]"></div>
+            <div className="w-4 h-4 rounded-full bg-teal-500 animate-bounce [animation-delay:.3s]"></div>
+            <div className="w-4 h-4 rounded-full bg-teal-500 animate-bounce [animation-delay:.7s]"></div>
           </div>
         ) : URLs.length > 0 ? (
           <div className="my-10 mx-2 w-full max-w-4xl border-2 rounded-3xl bg-white overflow-x-auto">
