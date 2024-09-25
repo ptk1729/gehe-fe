@@ -12,7 +12,9 @@ export default function MobileNav() {
     try {
       await logout()
       router.push('/signin')
-    } catch (error) {}
+    } catch (error) {
+      console.error('error logging out', error)
+    }
   }
 
   return (
@@ -23,12 +25,12 @@ export default function MobileNav() {
             Home
           </span>
         </Link>
-        <Link href="/about">
+        <Link href="/archive">
           <span className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 cursor-pointer">
             Archive
           </span>
         </Link>
-        <Link href="/contact">
+        <Link href="/profile">
           <span className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 cursor-pointer">
             Profile
           </span>
@@ -39,12 +41,16 @@ export default function MobileNav() {
         <>
           {/* Sign Out Button */}
 
-          <button
-            onClick={handleSignOut}
-            className="text-gray-700 hover:text-gray-900 bg-gray-100 px-3 py-2 rounded-md text-sm font-medium"
-          >
-            Sign Out
-          </button>
+          <div className="pt-4 pb-3 border-t border-gray-200">
+            <div className="flex items-center px-4 space-x-4">
+              <button
+                onClick={handleSignOut}
+                className="text-gray-700 hover:text-gray-900 bg-gray-100 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
         </>
       ) : (
         <>

@@ -124,7 +124,7 @@ function Archive() {
           </table>
         </div>
       ) : (
-        'fetching archive URLs...'
+        'No archive URLs'
       )}
     </section>
   )
