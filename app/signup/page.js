@@ -18,8 +18,8 @@ export default function Signup() {
   const { updateUser } = useContext(UserContext)
 
   const [formData, setFormData] = useState({
-    firstname: '',
-    lastname: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
   })
@@ -52,7 +52,7 @@ export default function Signup() {
 
       if (!res.ok) {
         const errorData = await res.json()
-        throw new Error(errorData.message || 'Failed to sign up')
+        throw new Error(errorData.error || 'Failed to sign up')
       }
 
       const data = await res.json()
@@ -73,14 +73,14 @@ export default function Signup() {
         <form onSubmit={handleSubmit}>
           {/* First Name */}
           <div className="mb-4">
-            <label htmlFor="firstname" className="block text-gray-700 mb-2">
+            <label htmlFor="firstName" className="block text-gray-700 mb-2">
               First Name
             </label>
             <input
               type="text"
-              name="firstname"
-              id="firstname"
-              value={formData.firstname}
+              name="firstName"
+              id="firstName"
+              value={formData.firstName}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border rounded focus:outline-none focus:border-teal-500"
@@ -88,14 +88,14 @@ export default function Signup() {
           </div>
           {/* Last Name */}
           <div className="mb-4">
-            <label htmlFor="lastname" className="block text-gray-700 mb-2">
+            <label htmlFor="lastName" className="block text-gray-700 mb-2">
               Last Name
             </label>
             <input
               type="text"
-              name="lastname"
-              id="lastname"
-              value={formData.lastname}
+              name="lastName"
+              id="lastName"
+              value={formData.lastName}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border rounded focus:outline-none focus:border-teal-500"

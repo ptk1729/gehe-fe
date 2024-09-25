@@ -34,7 +34,7 @@ export default function Signin() {
 
       if (!res.ok) {
         const errorData = await res.json()
-        throw new Error(errorData.message || 'Failed to sign in')
+        throw new Error(errorData.error || 'Failed to sign in')
       }
 
       const { token } = await res.json()
