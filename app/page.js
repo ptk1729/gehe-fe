@@ -74,7 +74,7 @@ export default function Home() {
         setLoading(false)
         setShortenedUrl('')
       }, 1000)
-      // Clear message after 1 seconds
+      // Clear message after 1 seconds      
     }
   }
 
