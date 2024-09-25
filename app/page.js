@@ -70,8 +70,11 @@ export default function Home() {
     } catch (err) {
       setError(err.message || 'An unexpected error occurred')
     } finally {
-      setTimeout(() => setLoading(false), 1000)
-      setTimeout(() => setShortenedUrl(''), 1000) // Clear message after 1 seconds
+      setTimeout(() => {
+        setLoading(false)
+        setShortenedUrl('')
+      }, 1000)
+      // Clear message after 1 seconds
     }
   }
 
@@ -103,7 +106,6 @@ export default function Home() {
         }),
       })
 
-      console.log(response.status)
       if (response.status === 400) {
         // Assuming 409 is returned by the backend when there's a duplicate URL
         setError(
