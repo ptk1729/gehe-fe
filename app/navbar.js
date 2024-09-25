@@ -1,17 +1,21 @@
 // components/Navbar.js
 'use client'
 
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Link from 'next/link'
 import MobileNav from './MobileNav'
 import { AuthContext } from './AuthContext'
-import { useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const { token, logout } = useContext(AuthContext)
-  const router = useRouter()
+
+  const pathname = usePathname()
+
+  const bgColor = pathname === '/' ? 'bg-[#27272a]' : 'bg-[#f4f4f5]'
+  const color = pathname === '/' ? 'text-white' : 'text-black'
 
   async function handleSignOut() {
     try {
@@ -22,48 +26,58 @@ export default function Navbar() {
     }
   }
   return (
-    <nav className="bg-white shadow-md">
+    <nav className={`${bgColor} shadow-md`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo or App Name */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/">
-              <span className="text-xl font-bold text-teal-600 cursor-pointer">
-                Shortify
+              <span className="text-xl md:text-2xl font-bold text-teal-600 cursor-pointer">
+                Gehe.fyi
               </span>
             </Link>
           </div>
 
           {/* Desktop Navigation Links and Buttons */}
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <div className="flex space-x-4">
+
+          {token && (
+            <div className="hidden sm:ml-6 sm:flex sm:items-center">
               <Link href="/">
-                <span className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+                <span
+                  className={`${color} hover:opacity-80 px-4 py-2 rounded-md text-base font-medium cursor-pointer`}
+                >
                   Home
                 </span>
               </Link>
-              <Link href="/about">
-                <span className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
-                  About
+              <Link href="/archive">
+                <span
+                  className={`${color} hover:opacity-80 px-4 py-2 rounded-md text-base font-medium cursor-pointer`}
+                >
+                  Archive
                 </span>
               </Link>
-              <Link href="/contact">
-                <span className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
-                  Contact
+              <Link href="/profile">
+                <span
+                  className={`${color} hover:opacity-80 px-4 py-2 rounded-md text-base font-medium cursor-pointer`}
+                >
+                  Profile
                 </span>
               </Link>
             </div>
+          )}
 
+          <div className="hidden sm:ml-6 sm:flex sm:items-center">
             {token ? (
               <>
                 {/* Sign Out Button */}
-
-                <button
-                  onClick={handleSignOut}
-                  className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Sign Out
-                </button>
+                <div className="flex space-x-4 items-center">
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-base font-medium"
+                  >
+                    Sign Out
+                  </button>
+                </div>
               </>
             ) : (
               <>

@@ -25,12 +25,12 @@ export default function MobileNav() {
         </Link>
         <Link href="/about">
           <span className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 cursor-pointer">
-            About
+            Archive
           </span>
         </Link>
         <Link href="/contact">
           <span className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 cursor-pointer">
-            Contact
+            Profile
           </span>
         </Link>
       </div>
@@ -41,7 +41,7 @@ export default function MobileNav() {
 
           <button
             onClick={handleSignOut}
-            className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+            className="text-gray-700 hover:text-gray-900 bg-gray-100 px-3 py-2 rounded-md text-sm font-medium"
           >
             Sign Out
           </button>
