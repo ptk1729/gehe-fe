@@ -6,11 +6,13 @@ import Link from 'next/link'
 import MobileNav from './MobileNav'
 import { AuthContext } from './AuthContext'
 import { usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const { token, logout } = useContext(AuthContext)
+  const router = useRouter()
 
   const pathname = usePathname()
 
@@ -25,6 +27,7 @@ export default function Navbar() {
       console.error('Logout failed:', error)
     }
   }
+
   return (
     <nav className={`${bgColor} shadow-md`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

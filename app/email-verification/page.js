@@ -64,8 +64,8 @@ export default function Verification() {
             </label>
             <input
               type="text"
-              name="email"
-              id="email"
+              name="otp"
+              id="otp"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
