@@ -12,7 +12,9 @@ export default function MobileNav() {
     try {
       await logout()
       router.push('/signin')
-    } catch (error) {}
+    } catch (error) {
+      console.error('error logging out', error)
+    }
   }
 
   return (
