@@ -11,17 +11,11 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const { token, logout } = useContext(AuthContext)
-  const [bgColor, setBgColor] = useState('bg-[#f4f4f5]')
-  const [color, setColor] = useState('text-black')
+
   const pathname = usePathname()
 
-  useEffect(() => {
-    if (pathname === '/') {
-      setBgColor('bg-[#27272a]'), setColor('text-white')
-    } else {
-      setBgColor('bg-[#f4f4f5]'), setColor('text-black')
-    }
-  }, [pathname])
+  const bgColor = pathname === '/' ? 'bg-[#27272a]' : 'bg-[#f4f4f5]'
+  const color = pathname === '/' ? 'text-white' : 'text-black'
 
   async function handleSignOut() {
     try {
