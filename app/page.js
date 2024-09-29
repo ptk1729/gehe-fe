@@ -9,6 +9,9 @@ import { RiEdit2Fill } from 'react-icons/ri'
 import { TiTick } from 'react-icons/ti'
 import TimeAgo from './timeAgo'
 import Link from 'next/link'
+import { MdContentCopy } from 'react-icons/md'
+import { MdShare } from 'react-icons/md'
+import { MdSubdirectoryArrowRight } from 'react-icons/md'
 
 export default function Home() {
   const webURL = process.env.NEXT_PUBLIC_WEB_URL
@@ -25,11 +28,15 @@ export default function Home() {
   const [newShortenUrl, setNewShortenUrl] = useState('')
   const [selectedUrls, setSelectedUrls] = useState([])
 
+  // Fetching all URLs when the component mounts
   useEffect(() => {
     fetchAllURLs()
   }, [])
 
+  // Function to fetch all shortened URLs from the backend
   async function fetchAllURLs() {
+    setLoading(true)
+
     try {
       const response = await fetch(webURL + 'shortener/all', {
         method: 'GET',
@@ -38,13 +45,17 @@ export default function Home() {
           Authorization: `Bearer ${token}`,
         },
       })
+
       const urls = await response.json()
-      setURLs(urls)
+      setURLs(urls) // Update state with fetched URLs
     } catch (error) {
       console.error('Error fetching URLs:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
+  // Function to shorten a new URL
   const handleShortenUrl = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -65,19 +76,19 @@ export default function Home() {
       }
 
       const data = await response.json()
-      setShortenedUrl(data.shortUrl)
-      fetchAllURLs()
+      setShortenedUrl(data.shortUrl) // Store the new shortened URL
+      fetchAllURLs() // Refresh the list of URLs
     } catch (err) {
       setError(err.message || 'An unexpected error occurred')
     } finally {
       setTimeout(() => {
-        setLoading(false)
-        setShortenedUrl('')
+        setLoading(false) // Stop loading after operation
+        setShortenedUrl('') // Clear shortened URL after a short delay
       }, 1000)
-      // Clear message after 1 seconds      
     }
   }
 
+  // Handles selection and deselection of URLs for bulk actions
   const handleCheckboxChange = (id) => {
     if (selectedUrls.includes(id)) {
       setSelectedUrls(selectedUrls.filter((selectedId) => selectedId !== id))
@@ -86,12 +97,14 @@ export default function Home() {
     }
   }
 
+  // Toggles edit mode for a specific URL
   const toggleEditMode = (id, currentShortUrl) => {
     setIsEditable(!isEditable)
     setEditableId(id)
-    setNewShortenUrl(currentShortUrl)
+    setNewShortenUrl(currentShortUrl) // Store the current shortened URL for editing
   }
 
+  // Function to edit an existing shortened URL
   const handleEditUrl = async (id) => {
     try {
       const response = await fetch(webURL + `shortener/${id}`, {
@@ -107,7 +120,6 @@ export default function Home() {
       })
 
       if (response.status === 400) {
-        // Assuming 409 is returned by the backend when there's a duplicate URL
         setError(
           'Shortened URL already exists. Please choose a different name.'
         )
@@ -116,11 +128,11 @@ export default function Home() {
 
       const data = await response.json()
 
+      // Update the state with the edited URL
       const updatedURLs = URLs.map((url) => {
         if (url.id === id) {
           return {
             ...url,
-
             shortUrl: data.shortUrl,
             updatedAt: new Date(), // Update the timestamp
           }
@@ -129,12 +141,13 @@ export default function Home() {
       })
 
       setURLs(updatedURLs)
-      setIsEditable(!isEditable)
+      setIsEditable(!isEditable) // Exit edit mode
     } catch (err) {
       console.error(err)
     }
   }
 
+  // Function to archive selected URLs
   const handleArchiveSelected = async () => {
     setLoading(true)
 
@@ -148,10 +161,10 @@ export default function Home() {
           },
         })
       }
-      // Filter out the deleted URLs from the state
+      // Update state by removing archived URLs
       const updatedURLs = URLs.filter((url) => !selectedUrls.includes(url.id))
       setURLs(updatedURLs)
-      setSelectedUrls([]) // Clear the selection
+      setSelectedUrls([]) // Clear selected URLs
     } catch (error) {
       console.error('Error Archive URLs:', error)
     } finally {
@@ -159,6 +172,7 @@ export default function Home() {
     }
   }
 
+  // Function to delete selected URLs
   const handleDeleteSelected = async () => {
     setLoading(true)
 
@@ -172,10 +186,10 @@ export default function Home() {
           },
         })
       }
-      // Filter out the deleted URLs from the state
+      // Update state by removing deleted URLs
       const updatedURLs = URLs.filter((url) => !selectedUrls.includes(url.id))
       setURLs(updatedURLs)
-      setSelectedUrls([]) // Clear the selection
+      setSelectedUrls([]) // Clear selected URLs
     } catch (error) {
       console.error('Error deleting URLs:', error)
     } finally {
@@ -186,15 +200,25 @@ export default function Home() {
   return (
     <>
       <main className="relative flex flex-col items-center min-h-screen bg-[#f4f4f5]">
+        {/* Header Section */}
+
+        {/* <img
+          src="your-image.svg"
+          className="fixed top-0 left-0 w-full h-auto"
+          alt="SVG Image"
+        /> */}
+
         <div className="h-[40vh] bg-[#27272a] w-full flex justify-center items-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-16 mt-6 text-white">
+          <h1 className="text-4xl md:text-4xl font-bold mb-16 mt-6 text-white">
             URL Shortener
           </h1>
         </div>
-        <div className="static inset-0 flex justify-center items-center mb-16">
+
+        {/* URL Shortening Form */}
+        <div className="static inset-0 flex justify-center items-center mb-8 md:mb-16 mx-2">
           <form
             onSubmit={handleShortenUrl}
-            className="absolute w-full max-w-2xl bg-white px-2 py-3 md:px-10 md:py-6 rounded-md shadow-lg "
+            className="absolute w-full max-w-xl bg-white px-2 py-3 md:px-6 md:py-4 rounded-md shadow-lg "
           >
             <div className="flex items-center border-b border-teal-500 py-2">
               <input
@@ -208,7 +232,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-md border-4 text-white py-2 px-3 rounded ${
+                className={`flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded ${
                   loading ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
@@ -217,11 +241,13 @@ export default function Home() {
             </div>
           </form>
         </div>
+
+        {/* Display error or shortened URL */}
         {error && <p className="text-red-500 mt-4">{error}</p>}
         {shortenedUrl && (
           <p className="mt-4 text-green-500">Shortened URL: {shortenedUrl}</p>
         )}
-        {loading ? (
+        {/* {loading ? (
           <div className="flex flex-row gap-2 justify-center items-center">
             <div className="w-4 h-4 rounded-full bg-teal-500 animate-bounce [animation-delay:.7s]"></div>
             <div className="w-4 h-4 rounded-full bg-teal-500 animate-bounce [animation-delay:.3s]"></div>
@@ -331,35 +357,277 @@ export default function Home() {
             </table>
           </div>
         ) : (
-          <div className="h-[70vh] max-w-4xl w-full my-14 bg-white border-2 rounded-3xl"></div>
+          ''
+        )} */}
+
+        {/* display the list of URLs */}
+
+        {loading ? (
+          <div className="my-10 mx-2 w-full max-w-xl overflow-x-auto">
+            <ul className="mt-3 grid gap-2">
+              {[...Array(4)].map((_, index) => (
+                <li
+                  key={index}
+                  className="flex items-center rounded-xl border border-gray-200 bg-white p-3 shadow-lg"
+                >
+                  <div>
+                    <div className="mb-2.5 flex items-center space-x-2">
+                      <div className="h-6 w-28 rounded-md bg-gray-200"></div>
+                      <div className="h-6 w-6 rounded-full bg-gray-200"></div>
+                      <div className="h-6 w-20 rounded-md bg-gray-200"></div>
+                    </div>
+                    <div className="h-4 w-60 rounded-md bg-gray-200 sm:w-80"></div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : URLs.length > 0 ? (
+          <div className="my-10 mx-2 w-full max-w-xl overflow-x-auto">
+            <ul className="mx-2 my-2">
+              {URLs.sort(
+                (a, b) =>
+                  new Date(b.updatedAt).getTime() -
+                  new Date(a.updatedAt).getTime()
+              ).map(
+                ({
+                  id,
+                  originalUrl,
+                  shortUrl,
+                  clicks,
+                  archived,
+                  createdAt,
+                  updatedAt,
+                }) => (
+                  <li
+                    key={id}
+                    className="flex justify-between my-4 px-2 py-4 bg-white rounded-md shadow-lg"
+                  >
+                    <div className="flex space-x-3 items-start flex-shrink-0">
+                      <div>
+                        <input
+                          type="checkbox"
+                          className="ml-1 md:ml-2 mt-2 accent-teal-600"
+                          onChange={() => handleCheckboxChange(id)}
+                        />
+                      </div>
+
+                      <div className="flex flex-col justify-center">
+                        <div className="flex items-center space-x-2">
+                          {isEditable && editableId === id ? (
+                            <input
+                              type="text"
+                              value={newShortenUrl}
+                              onChange={(e) => setNewShortenUrl(e.target.value)}
+                              className="border p-2 rounded w-full"
+                            />
+                          ) : (
+                            <a
+                              href={'https://gehe.fyi/' + shortUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-base md:text-lg text-teal-500 hover:text-teal-600 hover:underline font-semibold"
+                            >
+                              {'gehe.fyi/' + shortUrl}
+                            </a>
+                          )}
+                          <button className="rounded-full p-1.5 transition-all duration-75 border border-gray-200 bg-gray-50 hover:scale-100 hover:bg-gray-100 active:bg-gray-100">
+                            <MdContentCopy className="text-sm md:text-base" />
+                          </button>
+                          {/* <button className="rounded-full p-1.5 transition-all duration-75 border border-gray-200 bg-gray-50 hover:scale-100 hover:bg-gray-100 active:bg-gray-100">
+                            <MdShare />
+                          </button> */}
+                          <button className="rounded-full p-1.5 transition-all duration-75 border border-gray-200 bg-gray-50 hover:scale-100 hover:bg-gray-100 active:bg-gray-100">
+                            <span>
+                              {isEditable && editableId === id ? (
+                                <TiTick
+                                  className="text-sm md:text-base"
+                                  onClick={() => handleEditUrl(id)}
+                                />
+                              ) : (
+                                <RiEdit2Fill
+                                  className="text-sm md:text-base"
+                                  onClick={() => toggleEditMode(id, shortUrl)}
+                                />
+                              )}
+                            </span>
+                          </button>
+                          <button className="flex items-center gap-x-1 rounded-md border border-gray-200 bg-gray-50 px-3 p-0.5 transition-colors hover:bg-gray-100 text-sm md:text-base">
+                            <span>
+                              <svg
+                                height="18"
+                                width="18"
+                                viewBox="0 0 18 18"
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-4 w-4 text-gray-700"
+                              >
+                                <g fill="currentColor">
+                                  <path
+                                    d="M8.095,7.778l7.314,2.51c.222,.076,.226,.388,.007,.47l-3.279,1.233c-.067,.025-.121,.079-.146,.146l-1.233,3.279c-.083,.219-.394,.215-.47-.007l-2.51-7.314c-.068-.197,.121-.385,.318-.318Z"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="1.5"
+                                  ></path>
+                                  <line
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="1.5"
+                                    x1="12.031"
+                                    x2="16.243"
+                                    y1="12.031"
+                                    y2="16.243"
+                                  ></line>
+                                  <line
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="1.5"
+                                    x1="7.75"
+                                    x2="7.75"
+                                    y1="1.75"
+                                    y2="3.75"
+                                  ></line>
+                                  <line
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="1.5"
+                                    x1="11.993"
+                                    x2="10.578"
+                                    y1="3.507"
+                                    y2="4.922"
+                                  ></line>
+                                  <line
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="1.5"
+                                    x1="3.507"
+                                    x2="4.922"
+                                    y1="11.993"
+                                    y2="10.578"
+                                  ></line>
+                                  <line
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="1.5"
+                                    x1="1.75"
+                                    x2="3.75"
+                                    y1="7.75"
+                                    y2="7.75"
+                                  ></line>
+                                  <line
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="1.5"
+                                    x1="3.507"
+                                    x2="4.922"
+                                    y1="3.507"
+                                    y2="4.922"
+                                  ></line>
+                                </g>
+                              </svg>
+                            </span>
+                            {clicks}{' '}
+                            <span className="hidden md:block"> clicks</span>
+                          </button>
+                        </div>
+
+                        <div className="flex">
+                          <span className="text-[#9ca3af] pt-1 pr-1">
+                            <svg
+                              viewBox="0 0 18 18"
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-4 w-4 text-gray-400"
+                            >
+                              <g fill="currentColor">
+                                <path
+                                  d="M15.25,9.75H4.75c-1.105,0-2-.895-2-2V3.75"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="1.5"
+                                ></path>
+                                <polyline
+                                  fill="none"
+                                  points="11 5.5 15.25 9.75 11 14"
+                                  stroke="currentColor"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="1.5"
+                                ></polyline>
+                              </g>
+                            </svg>
+                          </span>
+                          <a
+                            href={originalUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-black hover:opacity-80 text-[#9ca3af] text-sm md:text-base"
+                          >
+                            {originalUrl.substring(0, 40)}...
+                          </a>
+                        </div>
+
+                        {/* <div className="flex space-x-4">
+                          <span className="text-xs">{clicks} : clicks</span>
+                          <span className="text-xs">
+                            <TimeAgo date={createdAt} title={'Created at'} />
+                          </span>
+                          <span className="text-xs">
+                            <TimeAgo date={updatedAt} title={'Updated'} />
+                          </span>
+                        </div> */}
+                      </div>
+                    </div>
+                  </li>
+                )
+              )}
+            </ul>
+          </div>
+        ) : (
+          ''
         )}
 
         {deletedUrl && (
           <p className="mt-4 text-green-500">Shortened URL: {deletedUrl}</p>
         )}
+
         {selectedUrls.length > 0 && (
           <div
-            className={`action_menu fixed bottom-[-100%] transform transition-transform duration-500 ease-in-out ${
-              selectedUrls.length > 0 ? 'bottom-[6%]' : ''
-            } flex justify-between items-center text-teal-500 bg-white rounded-xl w-full md:w-[500px] h-16 md:h-20 px-2 md:px-3 py-4 md:py-6 border shadow-xl`}
+            className={`action_menu fixed bottom-[-100%] md:right-2 transform transition-transform duration-500 ease-in-out ${
+              selectedUrls.length > 0 ? 'bottom-[6%] ' : ''
+            } flex justify-between items-center text-teal-500 bg-white rounded w-full md:w-[400px] h-16 px-2 py-4 border shadow-xl`}
           >
             <div>
-              <span className="p-1 bg-teal-500 text-white rounded text-xs md:text-base">
+              <span className="p-1 bg-teal-500 text-white rounded text-sm">
                 {selectedUrls.length}
               </span>{' '}
-              <span className="text-xs md:text-base">document selected</span>
+              <span className="text-base">document selected</span>
             </div>
 
             <div className="flex gap-2 md:gap-3">
               <button
                 type="submit"
-                className={`flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-md border-4 text-white py-1 px-2 rounded `}
+                className={` bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white px-2 rounded `}
                 onClick={handleDeleteSelected}
               >
                 Delete
               </button>
               <button
-                className={`flex-shrink-0 bg-white hover:bg-[#f3f4f6] border-teal-500 hover:border-teal-700 text-md border text-teal-500 py-1 px-2 rounded `}
+                className={` bg-white hover:bg-[#f3f4f6] border-teal-500 text-sm border text-teal-500 py-1 px-2 rounded `}
                 onClick={handleArchiveSelected}
               >
                 Archive
@@ -367,14 +635,14 @@ export default function Home() {
             </div>
           </div>
         )}
-        <div className="static md:fixed md:right-0 md:bottom-28 md:-rotate-90">
+        {/* <div className="static md:fixed md:right-0 md:bottom-28 md:-rotate-90">
           <Link
             href="/archive"
             className="text-[#26a8ed] hover:underline underline-offset-2"
           >
             View the archives →
           </Link>
-        </div>
+        </div> */}
       </main>
     </>
   )

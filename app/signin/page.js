@@ -40,7 +40,7 @@ export default function Signin() {
       const { token } = await res.json()
 
       loginSaveCookie(token) // Store the JWT
-      router.push('/') // Redirect to home page
+      router.push('/') // Redirect to home page.
     } catch (err) {
       setError(err.message)
     }

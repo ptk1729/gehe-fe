@@ -35,33 +35,32 @@ export default function Navbar() {
           {/* Logo or App Name */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/">
-              <span className="text-xl md:text-2xl font-bold text-teal-600 cursor-pointer">
+              <span className="text-xl font-bold text-teal-600 cursor-pointer">
                 Gehe.fyi
               </span>
             </Link>
           </div>
 
           {/* Desktop Navigation Links and Buttons */}
-
           {token && (
             <div className="hidden sm:ml-6 sm:flex sm:items-center">
               <Link href="/">
                 <span
-                  className={`${color} hover:opacity-80 px-4 py-2 rounded-md text-base font-medium cursor-pointer`}
+                  className={`${color} hover:opacity-80 px-4 py-2 rounded-md text-sm font-medium cursor-pointer`}
                 >
                   Home
                 </span>
               </Link>
               <Link href="/archive">
                 <span
-                  className={`${color} hover:opacity-80 px-4 py-2 rounded-md text-base font-medium cursor-pointer`}
+                  className={`${color} hover:opacity-80 px-4 py-2 rounded-md text-sm font-medium cursor-pointer`}
                 >
                   Archive
                 </span>
               </Link>
               <Link href="/profile">
                 <span
-                  className={`${color} hover:opacity-80 px-4 py-2 rounded-md text-base font-medium cursor-pointer`}
+                  className={`${color} hover:opacity-80 px-4 py-2 rounded-md text-sm font-medium cursor-pointer`}
                 >
                   Profile
                 </span>
@@ -76,7 +75,7 @@ export default function Navbar() {
                 <div className="flex space-x-4 items-center">
                   <button
                     onClick={handleSignOut}
-                    className="w-full text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-base font-medium"
+                    className="w-full text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-sm font-medium"
                   >
                     Sign Out
                   </button>
@@ -88,12 +87,12 @@ export default function Navbar() {
 
                 <div className="flex items-center px-4 space-x-4">
                   <Link href="/signin">
-                    <button className="w-full text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-base font-medium">
+                    <button className="w-full text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-sm font-medium">
                       Sign In
                     </button>
                   </Link>
                   <Link href="/signup">
-                    <button className="w-full bg-teal-500 hover:bg-teal-700 text-white px-3 py-2 rounded-md text-base font-medium">
+                    <button className="w-full bg-teal-500 hover:bg-teal-700 text-white px-3 py-2 rounded-md text-sm font-medium">
                       Sign Up
                     </button>
                   </Link>
