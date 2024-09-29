@@ -368,7 +368,7 @@ export default function Home() {
               {[...Array(4)].map((_, index) => (
                 <li
                   key={index}
-                  className="flex items-center rounded-xl border border-gray-200 bg-white p-3 shadow-lg"
+                  className="flex items-center rounded-xl border-gray-200 bg-white p-3 shadow-lg"
                 >
                   <div>
                     <div className="mb-2.5 flex items-center space-x-2">
@@ -384,7 +384,7 @@ export default function Home() {
           </div>
         ) : URLs.length > 0 ? (
           <div className="my-10 mx-2 w-full max-w-xl overflow-x-auto">
-            <ul className="mx-2 my-2">
+            <ul className="mx-2 my-2 grid gap-2">
               {URLs.sort(
                 (a, b) =>
                   new Date(b.updatedAt).getTime() -
@@ -401,7 +401,7 @@ export default function Home() {
                 }) => (
                   <li
                     key={id}
-                    className="flex justify-between my-4 px-2 py-4 bg-white rounded-md shadow-lg"
+                    className="flex items-center rounded-xl border-gray-200 bg-white p-3 shadow-lg"
                   >
                     <div className="flex space-x-3 items-start flex-shrink-0">
                       <div>
