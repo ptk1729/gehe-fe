@@ -54,7 +54,15 @@ export default function Home() {
       setLoading(false)
     }
   }
-
+  function copyToClipboard(shortUrl) {
+  try {
+    navigator.clipboard.writeText(shortUrl)
+  } catch (error) {
+    console.log("Error copying to clipboard:", error);
+    
+  }
+  
+}
   // Function to shorten a new URL
   const handleShortenUrl = async (e) => {
     e.preventDefault()
@@ -431,7 +439,10 @@ export default function Home() {
                               {'gehe.fyi/' + shortUrl}
                             </a>
                           )}
-                          <button className="rounded-full p-1.5 transition-all duration-75 border border-gray-200 bg-gray-50 hover:scale-100 hover:bg-gray-100 active:bg-gray-100">
+                          < button onClick = {
+                            () => copyToClipboard('https://gehe.fyi/' + shortUrl)
+                          }
+                          className = "rounded-full p-1.5 transition-all duration-75 border border-gray-200 bg-gray-50 hover:scale-100 hover:bg-gray-100 active:bg-gray-100" >
                             <MdContentCopy className="text-sm md:text-base" />
                           </button>
                           {/* <button className="rounded-full p-1.5 transition-all duration-75 border border-gray-200 bg-gray-50 hover:scale-100 hover:bg-gray-100 active:bg-gray-100">

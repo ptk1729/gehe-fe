@@ -41,6 +41,7 @@ export default function Signin() {
 
       loginSaveCookie(token) // Store the JWT
       router.push('/') // Redirect to home page.
+      location.reload()
     } catch (err) {
       setError(err.message)
     }
